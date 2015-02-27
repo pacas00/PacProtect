@@ -47,7 +47,7 @@ def mavenuser = System.getenv("maven_user") ?: "1"
 
 minecraft {
     version = "1.7.10-10.13.2.1236"
-    assetDir = "eclipse/assets"
+    runDir = "eclipse"
     
     replaceIn "mod_PacProtect.java"
     replace "@VERSION@", project.version
