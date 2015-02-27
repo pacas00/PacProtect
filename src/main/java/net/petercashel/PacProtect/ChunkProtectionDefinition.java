@@ -18,6 +18,9 @@ public class ChunkProtectionDefinition {
 		this.Owner = owner;
 	}
 	
+	public ChunkProtectionDefinition() {
+	}
+
 	public boolean addFriend (UUID friend) {
 		for (int i = 0; i < friends.size(); i++) {
 			if (friends.get(i).compareTo(friend) == 0) {

@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.*;
 
 import net.minecraft.command.ServerCommandManager;
@@ -51,10 +55,15 @@ public class mod_PacProtect {
 	private MinecraftServer server;
 
 	private LandProtectCMD cmd;
+	Timer saveTimer = new Timer();
+	
+	File configdir = new File("config" + File.separator + "PacProtect");
+	File config = new File("config" + File.separator + "PacProtect" + File.separator + "PacProtect.cfg");
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
+		configdir.mkdirs();
+		Configuration cfg = new Configuration(config);
 		try {
 			cfg.load();
 			
@@ -122,6 +131,10 @@ public class mod_PacProtect {
 //			}
 //		}
 		
+
+		//Load ProtectedChunks
+	    ChunkProtectionManager.load();
+		
 		
 	}
 	
@@ -132,14 +145,24 @@ public class mod_PacProtect {
 		ServerCommandManager commands = (ServerCommandManager) server.getCommandManager();
 		cmd = new LandProtectCMD();
 		commands.registerCommand(cmd);
-		//Load ProtectedChunks
+		
+		
+		saveTimer.scheduleAtFixedRate(new TimerTask() {
+			  @Override
+			  public void run() {
+			    ChunkProtectionManager.save();
+			  }
+			}, 5*60*1000, 5*60*1000);
 		
 	}
 	
 	@EventHandler
 	public void ServerStopping(FMLServerStoppingEvent event) 
 	{
+		saveTimer.cancel();
+		saveTimer.purge();
 		//Save ProtectedChunks
+	    ChunkProtectionManager.save();
 		
 	}
 }

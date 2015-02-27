@@ -1,8 +1,22 @@
 package net.petercashel.PacProtect;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.petercashel.PacProtect.Events.ChunkProtectionAddedEvent;
@@ -24,6 +38,7 @@ public class ChunkProtectionManager {
 		protectedChunks.add(chunkProtectionDefinition);
 		ChunkProtectionAddedEvent event = new ChunkProtectionAddedEvent(chunkProtectionDefinition);
 		MinecraftForge.EVENT_BUS.post(event);
+		save();
 		return true;
 	}
 
@@ -70,5 +85,114 @@ public class ChunkProtectionManager {
 		}
 		return false;
 	}
+	
+	public static boolean save() {
+
+		JsonArray jsonRoot = new JsonArray();
+
+		Iterator<ChunkProtectionDefinition> iterator = protectedChunks.iterator();
+		while (iterator.hasNext()) {
+			ChunkProtectionDefinition p = iterator.next();
+			JsonObject jobj = new JsonObject();
+			
+			final GsonBuilder gsonBuilder = new GsonBuilder();
+		    gsonBuilder.registerTypeAdapter(ChunkProtectionDefinition.class, new ChunkProtectionDefinitionTypeAdapter());
+		    gsonBuilder.setPrettyPrinting();
+
+		    final Gson gson = gsonBuilder.create();
+		    final String json = gson.toJson(p);
+				
+			JsonParser parse = new JsonParser();
+			
+			jsonRoot.add(parse.parse(json));
+		}
+
+		// Use GSON to pretty up my JSON.Simple
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String jsonString;
+		jsonString = gson.toJson(jsonRoot);
+		// done
+
+		FileOutputStream fop = null;
+		File file;
+		File dir = new File("config" + File.separator + "PacProtect" + File.separator);
+		dir.mkdirs();
+		String content = jsonString;
+
+		try {
+
+			file = new File("config" + File.separator + "PacProtect" + File.separator + "protectedAreas.json");
+			fop = new FileOutputStream(file);
+
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			// get the content in bytes
+			byte[] contentInBytes = content.getBytes();
+
+			fop.write(contentInBytes);
+			fop.flush();
+			fop.close();
+
+			System.out.println("Done");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fop != null) {
+					fop.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+
+	public static boolean load() {
+		String content = "";
+		new File("config" + File.separator).mkdir();
+		try {
+			content = readFile("config" + File.separator + "PacProtect" + File.separator + "protectedAreas.json", Charset.defaultCharset());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		JsonElement jelement = new JsonParser().parse(content);
+	    JsonArray jarray = jelement.getAsJsonArray();
+	    
+		Iterator<JsonElement> iterator = jarray.iterator();
+		while (iterator.hasNext()) {
+			JsonElement e = iterator.next();
+			
+			String json = e.toString();
+			System.out.println(json);
+			
+			final GsonBuilder gsonBuilder = new GsonBuilder();
+		    gsonBuilder.registerTypeAdapter(ChunkProtectionDefinition.class, new ChunkProtectionDefinitionTypeAdapter());
+		    gsonBuilder.setPrettyPrinting();
+
+		    final Gson gson = gsonBuilder.create();
+		    
+			ChunkProtectionDefinition d = gson.fromJson(json, ChunkProtectionDefinition.class);
+		    
+			protectedChunks.add(d);
+		}
+
+		return true;
+		
+	}
+	
+	public static String readFile(String path, Charset encoding) throws IOException {
+
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		return new String(encoded, encoding);
+	}
+	
+	
 
 }

@@ -29,17 +29,19 @@ public class LandProtectCMD extends CommandBase {
 			System.out.println(args[i]);
 		}
 
-
 		String cmd = args[0];
 
 		if (cmd.equalsIgnoreCase("help")) help(paramICommandSender, args);
 
-		if (cmd.equalsIgnoreCase("add")) add(paramICommandSender, args);
+		else if (cmd.equalsIgnoreCase("add")) add(paramICommandSender, args);
 
-		if (cmd.equalsIgnoreCase("remove")) remove(paramICommandSender, args);
+		else if (cmd.equalsIgnoreCase("remove")) remove(paramICommandSender, args);
 
-		if (cmd.equalsIgnoreCase("friend")) friend(paramICommandSender, args);
+		else if (cmd.equalsIgnoreCase("friend")) friend(paramICommandSender, args);
+		
+		else if (cmd.equalsIgnoreCase("admin")) admin(paramICommandSender, args);
 
+		else throw new WrongUsageException("/protect {help|add|remove|friend}");
 
 
 	}
@@ -50,8 +52,10 @@ public class LandProtectCMD extends CommandBase {
 		String cmd = args[1];
 
 		if (cmd.equalsIgnoreCase("add")) addFriend(paramICommandSender, args);
-
-		if (cmd.equalsIgnoreCase("remove")) removeFriend(paramICommandSender, args);
+		
+		else if (cmd.equalsIgnoreCase("remove")) removeFriend(paramICommandSender, args);
+		
+		else throw new WrongUsageException("/protect friend {add|remove}");
 
 
 	}
@@ -62,18 +66,22 @@ public class LandProtectCMD extends CommandBase {
 		UUID Owner = player.getGameProfile().getId();
 		int ChunkX = player.chunkCoordX;
 		int ChunkZ = player.chunkCoordZ;
-		
+
 		if (args.length < 3) throw new WrongUsageException("/protect friend remove USERNAME");
-		
-		EntityPlayer playerFriend = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[2]);
-	
-		boolean result = ChunkProtectionManager.removeFriend(Owner, ChunkX, ChunkZ, playerFriend.getGameProfile().getId());
-		if (result) {
-			ChatComponentText t = new ChatComponentText("Friend removed successfully.");
-			paramICommandSender.addChatMessage(t);
-		} else {
-			ChatComponentText t = new ChatComponentText("Friend could not be removed.");
-			paramICommandSender.addChatMessage(t);
+
+		try {
+			EntityPlayer playerFriend = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[2]);
+
+			boolean result = ChunkProtectionManager.removeFriend(Owner, ChunkX, ChunkZ, playerFriend.getGameProfile().getId());
+			if (result) {
+				ChatComponentText t = new ChatComponentText("Friend removed successfully.");
+				paramICommandSender.addChatMessage(t);
+			} else {
+				ChatComponentText t = new ChatComponentText("Friend could not be removed.");
+				paramICommandSender.addChatMessage(t);
+			}
+		} catch (NullPointerException e) {
+			throw new WrongUsageException("Player must be online to add");
 		}
 
 	}
@@ -86,16 +94,20 @@ public class LandProtectCMD extends CommandBase {
 		int ChunkZ = player.chunkCoordZ;
 
 		if (args.length < 3) throw new WrongUsageException("/protect friend add USERNAME");
-		
-		EntityPlayer playerFriend = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[2]);
-	
-		boolean result = ChunkProtectionManager.addFriend(Owner, ChunkX, ChunkZ, playerFriend.getGameProfile().getId());
-		if (result) {
-			ChatComponentText t = new ChatComponentText("Friend added successfully.");
-			paramICommandSender.addChatMessage(t);
-		} else {
-			ChatComponentText t = new ChatComponentText("Friend could not be added.");
-			paramICommandSender.addChatMessage(t);
+		System.out.println(args[2]);
+		try {
+			EntityPlayer playerFriend = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[2]);
+
+			boolean result = ChunkProtectionManager.addFriend(Owner, ChunkX, ChunkZ, playerFriend.getGameProfile().getId());
+			if (result) {
+				ChatComponentText t = new ChatComponentText("Friend added successfully.");
+				paramICommandSender.addChatMessage(t);
+			} else {
+				ChatComponentText t = new ChatComponentText("Friend could not be added.");
+				paramICommandSender.addChatMessage(t);
+			}
+		} catch (NullPointerException e) {
+			throw new WrongUsageException("Player must be online to add");
 		}
 
 	}
@@ -116,6 +128,7 @@ public class LandProtectCMD extends CommandBase {
 			ChatComponentText t = new ChatComponentText("Protection could not be removed.");
 			paramICommandSender.addChatMessage(t);
 		}
+
 
 	}
 
@@ -141,5 +154,12 @@ public class LandProtectCMD extends CommandBase {
 		paramICommandSender.addChatMessage(new ChatComponentText("/protect {help|add|remove|friend}"));
 
 	}
+	
+	private void admin(ICommandSender paramICommandSender, String[] args) {
+		if (args.length < 2) throw new WrongUsageException("/protect admin {}");
+		
+	}
+
+	
 
 }
