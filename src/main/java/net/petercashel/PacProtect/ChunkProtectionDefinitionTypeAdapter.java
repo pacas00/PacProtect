@@ -14,22 +14,22 @@ public class ChunkProtectionDefinitionTypeAdapter extends TypeAdapter<ChunkProte
 	@Override
 	public void write( final JsonWriter out, final ChunkProtectionDefinition d) throws IOException {
 		out.beginObject();
-	    out.name("ChunkX").value(d.ChunkX);
-	    out.name("ChunkZ").value(d.ChunkZ);
-	    out.name("Owner").value(d.Owner.toString());
-	    String s = "";
-	    for (int i = 0; i < d.friends.size(); i++) {
-	    	if (!d.friends.isEmpty()) {
-	    		if (i == 0) {
-	    			s = d.friends.get(i).toString();
-	    		} else {
-	    			s = s + ";" + d.friends.get(i).toString();
-	    		}
-	    	}
-	    	
-	    }
-	    out.name("Friends").value(s);
-	    out.endObject();
+		out.name("ChunkX").value(d.ChunkX);
+		out.name("ChunkZ").value(d.ChunkZ);
+		out.name("Owner").value(d.Owner.toString());
+		String s = "";
+		for (int i = 0; i < d.friends.size(); i++) {
+			if (!d.friends.isEmpty()) {
+				if (i == 0) {
+					s = d.friends.get(i).toString();
+				} else {
+					s = s + ";" + d.friends.get(i).toString();
+				}
+			}
+
+		}
+		out.name("Friends").value(s);
+		out.endObject();
 
 	}
 
@@ -39,17 +39,14 @@ public class ChunkProtectionDefinitionTypeAdapter extends TypeAdapter<ChunkProte
 
 		in.beginObject();
 		while (in.hasNext()) {
-			switch (in.nextName()) {
-			case "ChunkX":
+			String s = in.nextName();
+			if (s.equalsIgnoreCase("ChunkX")) {
 				d.ChunkX = Integer.parseInt((in.nextString()));
-				break;
-			case "ChunkZ":
+			} else if (s.equalsIgnoreCase("ChunkZ")) {
 				d.ChunkZ = Integer.parseInt((in.nextString()));
-				break;
-			case "Owner":
+			} else if (s.equalsIgnoreCase("Owner")) {
 				d.Owner = UUID.fromString((in.nextString()));
-				break;
-			case "Friends":
+			} else if (s.equalsIgnoreCase("Friends")) {
 				String st = in.nextString();
 				String[] fr = st.split(";");
 				if (fr.length == 0 || st.isEmpty() || st.equalsIgnoreCase("")) { } else {
@@ -57,7 +54,6 @@ public class ChunkProtectionDefinitionTypeAdapter extends TypeAdapter<ChunkProte
 						d.friends.add(UUID.fromString(fr[i]));
 					}
 				}
-				break;
 			}
 		}
 		in.endObject();
