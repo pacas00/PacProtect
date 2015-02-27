@@ -29,6 +29,10 @@ repositories {
 		    url = "http://maven.ic2.player.to/"
 	}
     maven {
+		    name = "dynmap"
+		    url = "http://repo.mikeprimm.com/"
+	}
+    maven {
         name 'Forge'
         url 'http://files.minecraftforge.net/maven'
     }
@@ -38,7 +42,7 @@ apply plugin: 'java'
 apply plugin: 'forge'
 
 def buildnumber = System.getenv("BUILD_NUMBER") ?: "dev"
-version = "v1.1." + buildnumber.toString()
+version = "1.0." + buildnumber.toString()
 group= "net.petercashel.PacProtect" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "PacProtect"
 
@@ -46,7 +50,7 @@ def mavenpass = System.getenv("maven_pass") ?: "1"
 def mavenuser = System.getenv("maven_user") ?: "1"
 
 minecraft {
-    version = "1.7.10-10.13.2.1236"
+    version = "1.7.10-10.13.2.1291"
     runDir = "eclipse"
     
     replaceIn "mod_PacProtect.java"
@@ -54,9 +58,9 @@ minecraft {
 }
 
 dependencies {
-    //compile files('lib/fake_HQM.jar');		// one class jar containing a boolean to compile against
-	//compile files('lib/appliedenergistics2-rv2-beta-6-dev.jar');		// App Eng in libs
-	//compile "appeng:appliedenergistics2:rv2-stable-1:dev"
+    compile "us.dynmap:DynmapCoreAPI:2.1"
+	compile "us.dynmap:DynmapCore:2.1-SNAPSHOT"
+	
 }
 
 processResources
