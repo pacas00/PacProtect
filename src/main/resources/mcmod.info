@@ -1,0 +1,21 @@
+[
+{
+  "modid": "mod_pacprotect",
+  "name": "Pacas00's Random Mod of Protection!",
+  "description": "Because",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authors": [
+    "pacas00"
+  ],
+  "credits": "pacas00",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  ]
+}
+]

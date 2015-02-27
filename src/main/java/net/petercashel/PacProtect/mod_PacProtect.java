@@ -1,0 +1,145 @@
+package net.petercashel.PacProtect;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.Level;
+
+import com.google.common.collect.Maps;
+import com.mojang.authlib.GameProfile;
+
+import java.lang.reflect.*;
+
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.util.FakePlayer;
+import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.network.FMLEventChannel;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+
+
+@Mod(modid = "mod_PacProtect", name = "PacProtect", version = "mod_PacProtect", acceptedMinecraftVersions = "[1.7.10]", dependencies = mod_PacProtect.DEPENDENCIES)
+public class mod_PacProtect {
+	
+    public static final String DEPENDENCIES = "required-after:Forge@[10.13.2.1236,)";
+	
+	@Instance(value = "mod_PacProtect")
+	public static mod_PacProtect instance;
+	
+	public static final String VERSION = "@VERSION@";
+	
+	@SidedProxy(clientSide = "net.petercashel.PacProtect.ClientProxy", serverSide = "net.petercashel.PacProtect.CommonProxy")
+	public static CommonProxy proxy;
+
+	
+	public static final String CATEGORY_GENERAL = "general";
+
+	private MinecraftServer server;
+
+	private LandProtectCMD cmd;
+	
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
+		try {
+			cfg.load();
+			
+			//anvilBadItem = cfg.get(CATEGORY_GENERAL, "anvilInvalidItemChat", false).getBoolean(false);
+
+			
+		} catch (Exception e) {
+			System.out.println("[PacProtect] Error Loading Config");
+		} finally {
+			cfg.save();
+		}
+
+	}
+
+	@EventHandler
+	public void init(FMLInitializationEvent event){
+
+		proxy.init();
+		System.out.println("[PacProtect] initialised.");
+		FMLLog.log("PacProtect", Level.INFO, "Mod Has Loaded [PacProtect]");
+		
+	}
+	
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
+		FMLCommonHandler.instance().bus().register(new ProtectionEventHandle());
+		MinecraftForge.EVENT_BUS.register(new ProtectionEventHandle());
+		
+//		//List FakePlayers
+//		//net.minecraftforge.common.util.FakePlayerFactory.fakePlayers;
+//		Class FPF = null;
+//		try {
+//			FPF = this.getClass().forName("net.minecraftforge.common.util.FakePlayerFactory");
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		Field[] f = FPF.getDeclaredFields();
+//		Object fkPlrs = null;
+//		for (int i = 0; i < f.length; i++) {
+//			if (f[i].getName().contains("fakePlayers")) {
+//				try {
+//					f[i].setAccessible(true);
+//					fkPlrs = f[i].get(null);
+//				} catch (IllegalArgumentException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IllegalAccessException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				FMLLog.log("PacProtect", Level.INFO, f[i].getName());
+//				System.out.println(f[i].getName());
+//			}
+//		}
+//		Map<GameProfile, FakePlayer> fakePlayers = (Map<GameProfile, FakePlayer>)(fkPlrs);
+//		if (fakePlayers != null) {
+//			if (!fakePlayers.isEmpty()) {
+//				Iterator it = fakePlayers.keySet().iterator();
+//				while (it.hasNext()) {
+//					GameProfile n = (GameProfile) it.next();
+//					FMLLog.log("PacProtect", Level.INFO, "FakePlayer: " + n.getName());
+//					System.out.println("FakePlayer: " + n.getName());
+//				}
+//			}
+//		}
+		
+		
+	}
+	
+	@EventHandler
+	public void ServerStarting(FMLServerStartingEvent event) 
+	{
+		server = MinecraftServer.getServer();
+		ServerCommandManager commands = (ServerCommandManager) server.getCommandManager();
+		cmd = new LandProtectCMD();
+		commands.registerCommand(cmd);
+		//Load ProtectedChunks
+		
+	}
+	
+	@EventHandler
+	public void ServerStopping(FMLServerStoppingEvent event) 
+	{
+		//Save ProtectedChunks
+		
+	}
+}
