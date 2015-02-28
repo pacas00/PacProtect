@@ -133,12 +133,12 @@ public class ProtectionEventHandle {
 					if (event.source.getEntity() instanceof EntityMob) {
 						EntityMob mob = (EntityMob) event.source.getEntity();
 						if (event.isCancelable()) event.setCanceled(true);
-						else mob.setDead();
+						mob.setDead();
 					}
 					if (event.source.getEntity() instanceof EntitySlime) {
 						EntitySlime mob = (EntitySlime) event.source.getEntity();
 						if (event.isCancelable()) event.setCanceled(true);
-						else mob.setDead();
+						mob.setDead();
 					}
 				}
 			}
