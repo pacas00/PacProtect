@@ -140,8 +140,6 @@ public class ChunkProtectionManager {
 			fop.flush();
 			fop.close();
 
-			System.out.println("Done");
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
