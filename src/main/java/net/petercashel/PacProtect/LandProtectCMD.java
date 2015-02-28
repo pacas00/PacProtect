@@ -39,24 +39,30 @@ public class LandProtectCMD extends CommandBase {
 
 		else if (cmd.equalsIgnoreCase("remove")) remove(paramICommandSender, args);
 
+		else if (cmd.equalsIgnoreCase("removeRadius")) removeRadius(paramICommandSender, args);
+
 		else if (cmd.equalsIgnoreCase("friend")) friend(paramICommandSender, args);
-		
+
 		else if (cmd.equalsIgnoreCase("admin")) admin(paramICommandSender, args);
 
-		else throw new WrongUsageException("/protect {help|add|remove|friend}");
+		else throw new WrongUsageException("/protect {help|add|addRadius|friend|remove|removeRadius|admin}");
 
 
 	}
 
 	private void friend(ICommandSender paramICommandSender, String[] args) {
-		if (args.length < 2) throw new WrongUsageException("/protect friend {add|remove}");
+		if (args.length < 2) throw new WrongUsageException("/protect friend {add|remove|addRadius|removeRadius}");
 
 		String cmd = args[1];
 
 		if (cmd.equalsIgnoreCase("add")) addFriend(paramICommandSender, args);
-		
+
+		else if (cmd.equalsIgnoreCase("addRadius")) addFriendRadius(paramICommandSender, args);
+
 		else if (cmd.equalsIgnoreCase("remove")) removeFriend(paramICommandSender, args);
-		
+
+		else if (cmd.equalsIgnoreCase("removeRadius")) removeFriendRadius(paramICommandSender, args);
+
 		else throw new WrongUsageException("/protect friend {add|remove}");
 
 
@@ -85,6 +91,89 @@ public class LandProtectCMD extends CommandBase {
 		} catch (NullPointerException e) {
 			throw new WrongUsageException("Player must be online to add");
 		}
+
+	}
+	
+	private void removeFriendRadius(ICommandSender paramICommandSender, String[] args) {
+		EntityPlayer player = (EntityPlayer) paramICommandSender;
+
+		UUID Owner = player.getGameProfile().getId();
+		int ChunkX = player.chunkCoordX;
+		int ChunkZ = player.chunkCoordZ;
+
+		if (args.length < 4) throw new WrongUsageException("/protect friend removeRadius USERNAME RADIUS");
+		int radius = Integer.valueOf(args[3]);
+		if (radius > 4) throw new WrongUsageException("Radius must be smaller than 5");
+		int added = 0;
+		int failed = 0;
+		for (int i = (ChunkX - radius); i < (ChunkX + radius); i++) {
+			for (int j = (ChunkZ - radius); j < (ChunkZ + radius); j++) {
+				try {
+					EntityPlayer playerFriend = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[2]);
+
+					boolean result = ChunkProtectionManager.removeFriend(Owner, ChunkX, ChunkZ, player.dimension, playerFriend.getGameProfile().getId());
+					if (result) {
+						added++;
+					} else {
+						failed++;
+					}
+				} catch (NullPointerException e) {
+					throw new WrongUsageException("Player must be online to add");
+					
+				}
+
+			}
+		}
+		ChatComponentText t = new ChatComponentText("Removed Friend from " + added + " Protections successfully.");
+		paramICommandSender.addChatMessage(t);
+		if (failed > 0) {
+			ChatComponentText t2 = new ChatComponentText(failed + "Failed to remove Friend from " + failed +" Protections.");
+			paramICommandSender.addChatMessage(t2);
+
+		}
+
+
+	}
+	
+	private void addFriendRadius(ICommandSender paramICommandSender, String[] args) {
+		EntityPlayer player = (EntityPlayer) paramICommandSender;
+
+		UUID Owner = player.getGameProfile().getId();
+		int ChunkX = player.chunkCoordX;
+		int ChunkZ = player.chunkCoordZ;
+
+		if (args.length < 4) throw new WrongUsageException("/protect friend addRadius USERNAME RADIUS");
+		System.out.println(args[2]);
+		int radius = Integer.valueOf(args[3]);
+		if (radius > 4) throw new WrongUsageException("Radius must be smaller than 5");
+		int added = 0;
+		int failed = 0;
+		for (int i = (ChunkX - radius); i < (ChunkX + radius); i++) {
+			for (int j = (ChunkZ - radius); j < (ChunkZ + radius); j++) {
+				try {
+					EntityPlayer playerFriend = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[2]);
+
+					boolean result = ChunkProtectionManager.addFriend(Owner, ChunkX, ChunkZ, player.dimension, playerFriend.getGameProfile().getId());
+					if (result) {
+						added++;
+					} else {
+						failed++;
+					}
+				} catch (NullPointerException e) {
+					throw new WrongUsageException("Player must be online to add");
+					
+				}
+
+			}
+		}
+		ChatComponentText t = new ChatComponentText("Added Friend to " + added + " Protections successfully.");
+		paramICommandSender.addChatMessage(t);
+		if (failed > 0) {
+			ChatComponentText t2 = new ChatComponentText(failed + "Failed to add Friend to " + failed +" Protections.");
+			paramICommandSender.addChatMessage(t2);
+
+		}
+
 
 	}
 
@@ -134,8 +223,8 @@ public class LandProtectCMD extends CommandBase {
 
 	}
 
-	private void addRadius(ICommandSender paramICommandSender, String[] args) {
-		if (args.length < 2) throw new WrongUsageException("/protect add RADIUS");
+	private void removeRadius(ICommandSender paramICommandSender, String[] args) {
+		if (args.length < 2) throw new WrongUsageException("/protect removeRadius RADIUS");
 		EntityPlayer player = (EntityPlayer) paramICommandSender;
 
 		UUID Owner = player.getGameProfile().getId();
@@ -145,7 +234,36 @@ public class LandProtectCMD extends CommandBase {
 		if (radius > 4) throw new WrongUsageException("Radius must be smaller than 5");
 		int added = 0;
 		int failed = 0;
-		//ChunkProtectionManager.addChunk(Owner, ChunkX, ChunkZ, player.dimension);
+		for (int i = (ChunkX - radius); i < (ChunkX + radius); i++) {
+			for (int j = (ChunkZ - radius); j < (ChunkZ + radius); j++) {
+				boolean result = ChunkProtectionManager.removeChunk(Owner, i, j, player.dimension);
+				if (result) {
+					added++;
+				} else {
+					failed++;
+				}
+			}
+		}
+		ChatComponentText t = new ChatComponentText(added + " Protections removed successfully.");
+		paramICommandSender.addChatMessage(t);
+		if (failed > 0) {
+			ChatComponentText t2 = new ChatComponentText(failed + " Protections failed to be removed.");
+			paramICommandSender.addChatMessage(t2);
+
+		}
+	}
+
+	private void addRadius(ICommandSender paramICommandSender, String[] args) {
+		if (args.length < 2) throw new WrongUsageException("/protect addRadius RADIUS");
+		EntityPlayer player = (EntityPlayer) paramICommandSender;
+
+		UUID Owner = player.getGameProfile().getId();
+		int ChunkX = player.chunkCoordX;
+		int ChunkZ = player.chunkCoordZ;
+		int radius = Integer.valueOf(args[1]);
+		if (radius > 4) throw new WrongUsageException("Radius must be smaller than 5");
+		int added = 0;
+		int failed = 0;
 		for (int i = (ChunkX - radius); i < (ChunkX + radius); i++) {
 			for (int j = (ChunkZ - radius); j < (ChunkZ + radius); j++) {
 				boolean result = ChunkProtectionManager.addChunk(Owner, i, j, player.dimension);
@@ -156,15 +274,15 @@ public class LandProtectCMD extends CommandBase {
 				}
 			}
 		}
-			ChatComponentText t = new ChatComponentText(added + " Protections added successfully.");
-			paramICommandSender.addChatMessage(t);
-			if (failed > 0) {
-				ChatComponentText t2 = new ChatComponentText(failed + " Protections failed to be added.");
-				paramICommandSender.addChatMessage(t2);
+		ChatComponentText t = new ChatComponentText(added + " Protections added successfully.");
+		paramICommandSender.addChatMessage(t);
+		if (failed > 0) {
+			ChatComponentText t2 = new ChatComponentText(failed + " Protections failed to be added.");
+			paramICommandSender.addChatMessage(t2);
 
-			}
+		}
 	}
-	
+
 	private void add(ICommandSender paramICommandSender, String[] args) {
 		EntityPlayer player = (EntityPlayer) paramICommandSender;
 
@@ -183,16 +301,14 @@ public class LandProtectCMD extends CommandBase {
 	}
 
 	private void help(ICommandSender paramICommandSender, String[] args) {
-		// TODO Auto-generated method stub
-		paramICommandSender.addChatMessage(new ChatComponentText("/protect {help|add|remove|friend}"));
-
+		paramICommandSender.addChatMessage(new ChatComponentText("/protect {help|add|addRadius|friend|remove|removeRadius|admin}"));
 	}
-	
+
 	private void admin(ICommandSender paramICommandSender, String[] args) {
 		if (args.length < 2) throw new WrongUsageException("/protect admin {}");
-		
+
 	}
 
-	
+
 
 }
