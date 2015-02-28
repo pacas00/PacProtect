@@ -35,14 +35,14 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.network.NetworkCheckHandler;
+import cpw.mods.fml.relauncher.Side;
 
 
-@Mod(modid = "mod_PacProtect", name = "PacProtect", version = "mod_PacProtect", acceptedMinecraftVersions = "[1.7.10]", dependencies = mod_PacProtect.DEPENDENCIES)
+@Mod(modid = "mod_PacProtect", name = "PacProtect", version = "mod_PacProtect")
 public class mod_PacProtect {
 	
-    public static final String DEPENDENCIES = "required-after:Forge@[10.13.2.1236,)";
-	
-	@Instance(value = "mod_PacProtect")
+    @Instance(value = "mod_PacProtect")
 	public static mod_PacProtect instance;
 	
 	public static final String VERSION = "@VERSION@";
@@ -174,4 +174,9 @@ public class mod_PacProtect {
 	    ChunkProtectionManager.save();
 		
 	}
+	
+    @NetworkCheckHandler
+    public boolean netCheckHandler(Map<String, String> mods, Side side) {
+        return true;
+    }
 }
