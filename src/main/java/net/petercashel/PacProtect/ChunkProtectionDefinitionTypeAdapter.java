@@ -14,6 +14,7 @@ public class ChunkProtectionDefinitionTypeAdapter extends TypeAdapter<ChunkProte
 	@Override
 	public void write( final JsonWriter out, final ChunkProtectionDefinition d) throws IOException {
 		out.beginObject();
+		out.name("Dim").value(d.Dim);
 		out.name("ChunkX").value(d.ChunkX);
 		out.name("ChunkZ").value(d.ChunkZ);
 		out.name("Owner").value(d.Owner.toString());
@@ -44,6 +45,8 @@ public class ChunkProtectionDefinitionTypeAdapter extends TypeAdapter<ChunkProte
 				d.ChunkX = Integer.parseInt((in.nextString()));
 			} else if (s.equalsIgnoreCase("ChunkZ")) {
 				d.ChunkZ = Integer.parseInt((in.nextString()));
+			} else if (s.equalsIgnoreCase("Dim")) {
+				d.Dim = Integer.parseInt((in.nextString()));
 			} else if (s.equalsIgnoreCase("Owner")) {
 				d.Owner = UUID.fromString((in.nextString()));
 			} else if (s.equalsIgnoreCase("Friends")) {

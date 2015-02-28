@@ -72,7 +72,7 @@ public class LandProtectCMD extends CommandBase {
 		try {
 			EntityPlayer playerFriend = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[2]);
 
-			boolean result = ChunkProtectionManager.removeFriend(Owner, ChunkX, ChunkZ, playerFriend.getGameProfile().getId());
+			boolean result = ChunkProtectionManager.removeFriend(Owner, ChunkX, ChunkZ, player.dimension, playerFriend.getGameProfile().getId());
 			if (result) {
 				ChatComponentText t = new ChatComponentText("Friend removed successfully.");
 				paramICommandSender.addChatMessage(t);
@@ -98,7 +98,7 @@ public class LandProtectCMD extends CommandBase {
 		try {
 			EntityPlayer playerFriend = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[2]);
 
-			boolean result = ChunkProtectionManager.addFriend(Owner, ChunkX, ChunkZ, playerFriend.getGameProfile().getId());
+			boolean result = ChunkProtectionManager.addFriend(Owner, ChunkX, ChunkZ, player.dimension, playerFriend.getGameProfile().getId());
 			if (result) {
 				ChatComponentText t = new ChatComponentText("Friend added successfully.");
 				paramICommandSender.addChatMessage(t);
@@ -120,7 +120,7 @@ public class LandProtectCMD extends CommandBase {
 		int ChunkX = player.chunkCoordX;
 		int ChunkZ = player.chunkCoordZ;
 
-		boolean result = ChunkProtectionManager.removeChunk(Owner, ChunkX, ChunkZ);
+		boolean result = ChunkProtectionManager.removeChunk(Owner, ChunkX, ChunkZ, player.dimension);
 		if (result) {
 			ChatComponentText t = new ChatComponentText("Protection removed successfully.");
 			paramICommandSender.addChatMessage(t);
@@ -139,7 +139,7 @@ public class LandProtectCMD extends CommandBase {
 		int ChunkX = player.chunkCoordX;
 		int ChunkZ = player.chunkCoordZ;
 
-		boolean result = ChunkProtectionManager.addChunk(Owner, ChunkX, ChunkZ);
+		boolean result = ChunkProtectionManager.addChunk(Owner, ChunkX, ChunkZ, player.dimension);
 		if (result) {
 			ChatComponentText t = new ChatComponentText("Protection added successfully.");
 			paramICommandSender.addChatMessage(t);

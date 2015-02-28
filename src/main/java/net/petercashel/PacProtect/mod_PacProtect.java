@@ -29,6 +29,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
@@ -57,6 +58,8 @@ public class mod_PacProtect {
 	private LandProtectCMD cmd;
 	Timer saveTimer = new Timer();
 	
+	static DynmapSupport dynmap = null;
+	
 	File configdir = new File("config" + File.separator + "PacProtect");
 	File config = new File("config" + File.separator + "PacProtect" + File.separator + "PacProtect.cfg");
 	
@@ -75,6 +78,7 @@ public class mod_PacProtect {
 		} finally {
 			cfg.save();
 		}
+		if(Loader.isModLoaded("Dynmap")) dynmap = new DynmapSupport();
 
 	}
 
@@ -82,6 +86,7 @@ public class mod_PacProtect {
 	public void init(FMLInitializationEvent event){
 
 		proxy.init();
+		
 		System.out.println("[PacProtect] initialised.");
 		FMLLog.log("PacProtect", Level.INFO, "Mod Has Loaded [PacProtect]");
 		
@@ -131,11 +136,6 @@ public class mod_PacProtect {
 //			}
 //		}
 		
-
-		//Load ProtectedChunks
-	    ChunkProtectionManager.load();
-		
-		
 	}
 	
 	@EventHandler
@@ -145,15 +145,24 @@ public class mod_PacProtect {
 		ServerCommandManager commands = (ServerCommandManager) server.getCommandManager();
 		cmd = new LandProtectCMD();
 		commands.registerCommand(cmd);
+
+		if(Loader.isModLoaded("Dynmap")) dynmap.serverInit();
 		
 		
-		saveTimer.scheduleAtFixedRate(new TimerTask() {
+
+	}
+	
+	@EventHandler
+	public void ServerStarted(FMLServerStartedEvent event) 
+	{
+		//Load ProtectedChunks
+	    ChunkProtectionManager.load();
+	    saveTimer.scheduleAtFixedRate(new TimerTask() {
 			  @Override
 			  public void run() {
 			    ChunkProtectionManager.save();
 			  }
 			}, 5*60*1000, 5*60*1000);
-		
 	}
 	
 	@EventHandler

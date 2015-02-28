@@ -13,6 +13,7 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -31,10 +32,10 @@ public class ProtectionEventHandle {
 	{
 		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
-			if (d.ChunkX == event.pickedUp.chunkCoordX && d.ChunkZ == event.pickedUp.chunkCoordX) {
-				if (d.Owner.compareTo(event.player.getGameProfile().getId()) == 0 || d.hasFriend(event.player.getGameProfile().getId())) {
+			if (d.ChunkX == event.pickedUp.chunkCoordX && d.ChunkZ == event.pickedUp.chunkCoordX && d.Dim == (event.pickedUp.dimension)) {
+				if (d.Owner.compareTo(event.player.getGameProfile().getId()) == 0 || d.hasFriend(event.player.getGameProfile().getId()) || event.player instanceof FakePlayer) {
 				} else {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
 				}
 			}
 		}
@@ -45,10 +46,10 @@ public class ProtectionEventHandle {
 	{
 		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
-			if (d.ChunkX == event.item.chunkCoordX && d.ChunkZ == event.item.chunkCoordX) {
-				if (d.Owner.compareTo(event.entityPlayer.getGameProfile().getId()) == 0 || d.hasFriend(event.entityPlayer.getGameProfile().getId())) {
+			if (d.ChunkX == event.item.chunkCoordX && d.ChunkZ == event.item.chunkCoordX && d.Dim == (event.item.dimension)) {
+				if (d.Owner.compareTo(event.entityPlayer.getGameProfile().getId()) == 0 || d.hasFriend(event.entityPlayer.getGameProfile().getId()) || event.entityPlayer instanceof FakePlayer) {
 				} else {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
 				}
 			}
 		}
@@ -59,16 +60,16 @@ public class ProtectionEventHandle {
 	{
 		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
-			if ((d.ChunkX == (event.x / 16) && d.ChunkZ == (event.z / 16))) {
-				if (d.Owner.compareTo(event.entityPlayer.getGameProfile().getId()) == 0 || d.hasFriend(event.entityPlayer.getGameProfile().getId())) {
+			if ((d.ChunkX == (event.x / 16) && d.ChunkZ == (event.z / 16) && d.Dim == event.world.provider.dimensionId)) {
+				if (d.Owner.compareTo(event.entityPlayer.getGameProfile().getId()) == 0 || d.hasFriend(event.entityPlayer.getGameProfile().getId()) || event.entityPlayer instanceof FakePlayer) {
 				} else {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
 				}
 			}
 			if ((d.ChunkX == (event.entityPlayer.chunkCoordX) && d.ChunkZ == (event.entityPlayer.chunkCoordZ))) {
-				if (d.Owner.compareTo(event.entityPlayer.getGameProfile().getId()) == 0 || d.hasFriend(event.entityPlayer.getGameProfile().getId())) {
+				if (d.Owner.compareTo(event.entityPlayer.getGameProfile().getId()) == 0 || d.hasFriend(event.entityPlayer.getGameProfile().getId()) || event.entityPlayer instanceof FakePlayer) {
 				} else {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
 				}
 			}
 		}
@@ -79,10 +80,10 @@ public class ProtectionEventHandle {
 	{
 		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
-			if (d.ChunkX == (event.x / 16) && d.ChunkZ == (event.z / 16)) {
-				if (d.Owner.compareTo(event.player.getGameProfile().getId()) == 0 || d.hasFriend(event.player.getGameProfile().getId())) {
+			if (d.ChunkX == (event.x / 16) && d.ChunkZ == (event.z / 16) && d.Dim == event.world.provider.dimensionId) {
+				if (d.Owner.compareTo(event.player.getGameProfile().getId()) == 0 || d.hasFriend(event.player.getGameProfile().getId()) || event.player instanceof FakePlayer) {
 				} else {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
 				}
 			}
 		}
@@ -93,10 +94,10 @@ public class ProtectionEventHandle {
 	{
 		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
-			if (d.ChunkX == (event.x / 16) && d.ChunkZ == (event.z / 16)) {
-				if (d.Owner.compareTo(event.getPlayer().getGameProfile().getId()) == 0 || d.hasFriend(event.getPlayer().getGameProfile().getId())) {
+			if (d.ChunkX == (event.x / 16) && d.ChunkZ == (event.z / 16) && d.Dim == event.world.provider.dimensionId) {
+				if (d.Owner.compareTo(event.getPlayer().getGameProfile().getId()) == 0 || d.hasFriend(event.getPlayer().getGameProfile().getId()) || event.getPlayer() instanceof FakePlayer) {
 				} else {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
 				}
 			}
 		}
@@ -107,10 +108,10 @@ public class ProtectionEventHandle {
 	{
 		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
-			if ((d.ChunkX == (event.target.chunkCoordX) && d.ChunkZ == (event.target.chunkCoordZ))) {
-				if (d.Owner.compareTo(event.entityPlayer.getGameProfile().getId()) == 0 || d.hasFriend(event.entityPlayer.getGameProfile().getId())) {
+			if ((d.ChunkX == (event.target.chunkCoordX) && d.ChunkZ == (event.target.chunkCoordZ) && d.Dim == (event.target.dimension))) {
+				if (d.Owner.compareTo(event.entityPlayer.getGameProfile().getId()) == 0 || d.hasFriend(event.entityPlayer.getGameProfile().getId()) || event.entityPlayer instanceof FakePlayer) {
 				} else {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
 				}
 			}
 		}
@@ -121,30 +122,23 @@ public class ProtectionEventHandle {
 	{
 		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
-			if ((d.ChunkX == (event.entity.chunkCoordX) && d.ChunkZ == (event.entity.chunkCoordZ))) {
+			if ((d.ChunkX == (event.entity.chunkCoordX) && d.ChunkZ == (event.entity.chunkCoordZ) && d.Dim == (event.entity.dimension))) {
 				if (event.source.getEntity() instanceof EntityPlayer) {
 					EntityPlayer plr = (EntityPlayer) event.source.getEntity();
-					if (d.Owner.compareTo(plr.getGameProfile().getId()) == 0 || d.hasFriend(plr.getGameProfile().getId())) {
-						System.out.println("Matching onLivingAttack - Plr");
+					if (d.Owner.compareTo(plr.getGameProfile().getId()) == 0 || d.hasFriend(plr.getGameProfile().getId()) || event.source.getEntity() instanceof FakePlayer) {
 					} else {
-						System.out.println("Canceling onLivingAttack - Plr");
-						System.out.println(event.isCancelable());
-						event.setCanceled(true);
+						if (event.isCancelable()) event.setCanceled(true);
 					}
 				} else {
-					System.out.println("Canceling onLivingAttack - Not Player");
-					event.setCanceled(true);
 					if (event.source.getEntity() instanceof EntityMob) {
 						EntityMob mob = (EntityMob) event.source.getEntity();
-						mob.setHealth(0);
-						mob.setDead();
-
+						if (event.isCancelable()) event.setCanceled(true);
+						else mob.setDead();
 					}
 					if (event.source.getEntity() instanceof EntitySlime) {
 						EntitySlime mob = (EntitySlime) event.source.getEntity();
-						mob.setHealth(0);
-						mob.setDead();
-
+						if (event.isCancelable()) event.setCanceled(true);
+						else mob.setDead();
 					}
 				}
 			}
@@ -156,12 +150,30 @@ public class ProtectionEventHandle {
 	{
 		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
-			if ((d.ChunkX == (event.entity.chunkCoordX) && d.ChunkZ == (event.entity.chunkCoordZ))) {
+			if ((d.ChunkX == (event.entity.chunkCoordX) && d.ChunkZ == (event.entity.chunkCoordZ) && d.Dim == (event.entity.dimension))) {
 				if (event.entity instanceof EntityMob) {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
+					else event.entity.setDead();
 				}
 				if (event.entity instanceof EntitySlime) {
-					event.setCanceled(true);
+					if (event.isCancelable()) event.setCanceled(true);
+					else event.entity.setDead();
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onLivingJumpEvent(LivingJumpEvent event)
+	{
+		for (int i = 0; i < ChunkProtectionManager.protectedChunks.size(); i++) {
+			ChunkProtectionDefinition d = ChunkProtectionManager.protectedChunks.get(i);
+			if ((d.ChunkX == (event.entity.chunkCoordX) && d.ChunkZ == (event.entity.chunkCoordZ) && d.Dim == (event.entity.dimension))) {
+				if (event.entity instanceof EntityMob) {
+					event.entity.setDead();
+				}
+				if (event.entity instanceof EntitySlime) {
+					event.entity.setDead();
 				}
 			}
 		}

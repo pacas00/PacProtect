@@ -7,15 +7,17 @@ import java.util.UUID;
 public class ChunkProtectionDefinition {
 	
 	public UUID Owner;
+	public int Dim = 0;
 	public int ChunkX = 0;
 	public int ChunkZ = 0;
 	boolean hasFriends = false;
 	List<UUID> friends = new ArrayList<UUID>();
 	
-	public ChunkProtectionDefinition ( UUID owner, int chunkX, int chunkZ ) {
+	public ChunkProtectionDefinition ( UUID owner, int chunkX, int chunkZ, int dim ) {
 		this.ChunkX = chunkX;
 		this.ChunkZ = chunkZ;
 		this.Owner = owner;
+		this.Dim = dim;
 	}
 	
 	public ChunkProtectionDefinition() {

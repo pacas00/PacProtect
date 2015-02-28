@@ -38,18 +38,20 @@ public class ChunkProtectionManager {
 		protectedChunks.add(chunkProtectionDefinition);
 		ChunkProtectionAddedEvent event = new ChunkProtectionAddedEvent(chunkProtectionDefinition);
 		MinecraftForge.EVENT_BUS.post(event);
+		if (mod_PacProtect.dynmap != null) mod_PacProtect.dynmap.addMarker(chunkProtectionDefinition);
 		save();
 		return true;
 	}
 
-	public static boolean addChunk(UUID owner, int chunkX, int chunkZ) {
-		return ChunkProtectionManager.addChunk(new ChunkProtectionDefinition(owner, chunkX, chunkZ));
+	public static boolean addChunk(UUID owner, int chunkX, int chunkZ, int dim) {
+		return ChunkProtectionManager.addChunk(new ChunkProtectionDefinition(owner, chunkX, chunkZ, dim));
 	}
 	
-	public static boolean removeChunk (UUID Owner, int ChunkX, int ChunkZ) {
+	public static boolean removeChunk (UUID Owner, int ChunkX, int ChunkZ, int dim) {
 		for (int i = 0; i < protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = protectedChunks.get(i);
 			if (d.ChunkX == ChunkX && d.ChunkZ == ChunkZ && d.Owner.compareTo(Owner) == 0) {
+				if (mod_PacProtect.dynmap != null) mod_PacProtect.dynmap.remMarker(d);
 				protectedChunks.remove(i);
 				ChunkProtectionRemovedEvent event = new ChunkProtectionRemovedEvent(d);
 				MinecraftForge.EVENT_BUS.post(event);
@@ -59,20 +61,21 @@ public class ChunkProtectionManager {
 		return false;
 	}
 
-	public static boolean addFriend(UUID owner, int chunkX, int chunkZ, UUID id) {
+	public static boolean addFriend(UUID owner, int chunkX, int chunkZ, int dim, UUID id) {
 		for (int i = 0; i < protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = protectedChunks.get(i);
 			if (d.ChunkX == chunkX && d.ChunkZ == chunkZ && d.Owner.compareTo(owner) == 0) {
 				d.addFriend(id);
 				ChunkProtectionFriendAddedEvent event = new ChunkProtectionFriendAddedEvent(d);
 				MinecraftForge.EVENT_BUS.post(event);
+				if (mod_PacProtect.dynmap != null) mod_PacProtect.dynmap.updateMarker(d);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public static boolean removeFriend(UUID owner, int chunkX, int chunkZ,
+	public static boolean removeFriend(UUID owner, int chunkX, int chunkZ, int dim,
 			UUID id) {
 		for (int i = 0; i < protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = protectedChunks.get(i);
@@ -80,6 +83,7 @@ public class ChunkProtectionManager {
 				d.delFriend(id);
 				ChunkProtectionFriendRemovedEvent event = new ChunkProtectionFriendRemovedEvent(d);
 				MinecraftForge.EVENT_BUS.post(event);
+				if (mod_PacProtect.dynmap != null) mod_PacProtect.dynmap.updateMarker(d);
 				return true;
 			}
 		}
@@ -181,6 +185,7 @@ public class ChunkProtectionManager {
 			ChunkProtectionDefinition d = gson.fromJson(json, ChunkProtectionDefinition.class);
 		    
 			protectedChunks.add(d);
+			if (mod_PacProtect.dynmap != null) mod_PacProtect.dynmap.updateMarker(d);
 		}
 
 		return true;
