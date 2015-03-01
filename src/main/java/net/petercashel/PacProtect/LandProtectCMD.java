@@ -1,5 +1,6 @@
 package net.petercashel.PacProtect;
 
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.command.CommandBase;
@@ -22,9 +23,35 @@ public class LandProtectCMD extends CommandBase {
 		return "/protect {help|add|remove|friend}";
 	}
 
+	/**
+	 * Adds the strings available in this command to the given list of tab completion options.
+	 */
+	public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] args)
+	{
+		if (args.length == 3) {
+			if (args[0].equalsIgnoreCase("friend")) {
+				return args.length == 3 ? getListOfStringsMatchingLastWord(args, this.getListOfPlayers()) : null;
+			}
+		} else if (args.length == 2) {
+			if (args[0].equalsIgnoreCase("friend")) {
+				String[] subcmd = {"add","remove","addRadius","removeRadius"};
+				return args.length == 2 ? getListOfStringsMatchingLastWord(args, subcmd) : null;
+			}
+		} else if (args.length == 1) {
+			String[] subcmd = {"help","add","addRadius","friend","remove","removeRadius","admin"};
+			return args.length == 1 ? getListOfStringsMatchingLastWord(args, subcmd) : null;
+		}
+		return null;
+	}
+
+	protected String[] getListOfPlayers()
+	{
+		return MinecraftServer.getServer().getAllUsernames();
+	}
+
 	@Override
 	public void processCommand(ICommandSender paramICommandSender, String[] args) {
-		if (args.length < 1) throw new WrongUsageException("/protect {help|add|remove|friend}");
+		if (args.length < 1) throw new WrongUsageException("/protect {help|add|addRadius|friend|remove|removeRadius|admin}");
 		for (int i = 0; i < args.length; i++) {
 			System.out.println(args[i]);
 		}
@@ -93,7 +120,7 @@ public class LandProtectCMD extends CommandBase {
 		}
 
 	}
-	
+
 	private void removeFriendRadius(ICommandSender paramICommandSender, String[] args) {
 		EntityPlayer player = (EntityPlayer) paramICommandSender;
 
@@ -119,7 +146,7 @@ public class LandProtectCMD extends CommandBase {
 					}
 				} catch (NullPointerException e) {
 					throw new WrongUsageException("Player must be online to add");
-					
+
 				}
 
 			}
@@ -134,7 +161,7 @@ public class LandProtectCMD extends CommandBase {
 
 
 	}
-	
+
 	private void addFriendRadius(ICommandSender paramICommandSender, String[] args) {
 		EntityPlayer player = (EntityPlayer) paramICommandSender;
 
@@ -161,7 +188,7 @@ public class LandProtectCMD extends CommandBase {
 					}
 				} catch (NullPointerException e) {
 					throw new WrongUsageException("Player must be online to add");
-					
+
 				}
 
 			}
