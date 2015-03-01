@@ -17,7 +17,23 @@ public class LandProtectCMD extends CommandBase {
 		return "protect";
 	}
 
-	@Override
+	 /**
+     * Return the required permission level for this command.
+     */
+    public int getRequiredPermissionLevel()
+    {
+        return 0;
+    }
+
+    /**
+     * Return the required permission level for this command.
+     */
+    public int getRequiredAdminPermissionLevel()
+    {
+        return 4;
+    }
+
+    @Override
 	public String getCommandUsage(ICommandSender paramICommandSender) {
 		// TODO Auto-generated method stub
 		return "/protect {help|add|remove|friend}";
@@ -333,6 +349,12 @@ public class LandProtectCMD extends CommandBase {
 
 	private void admin(ICommandSender paramICommandSender, String[] args) {
 		if (args.length < 2) throw new WrongUsageException("/protect admin {}");
+		
+		if (!(paramICommandSender.canCommandSenderUseCommand(4, "llllllll"))) {
+			throw new WrongUsageException("Your not the boss of me.");
+		}
+		
+		
 
 	}
 
