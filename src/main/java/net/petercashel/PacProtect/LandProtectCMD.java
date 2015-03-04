@@ -20,9 +20,25 @@ public class LandProtectCMD extends CommandBase {
 	 /**
      * Return the required permission level for this command.
      */
-    public int getRequiredPermissionLevel()
+	@Override
+	public int getRequiredPermissionLevel()
     {
         return 0;
+    }
+	
+	@Override
+	public List getCommandAliases()
+    {
+        return null;
+    }
+
+    /**
+     * Returns true if the given command sender is allowed to use this command.
+     */
+	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_)
+    {
+        return p_71519_1_.canCommandSenderUseCommand(this.getRequiredPermissionLevel(), this.getCommandName());
     }
 
     /**
