@@ -63,9 +63,12 @@ public class DynmapSupport extends DynmapCommonAPIListener {
 			toProcess.add(d);
 			return;
 		}
-		//AreaMarker createAreaMarker(String id, String lbl, boolean markup,
-		//String world, double[] x, double[] z, boolean persistent) 
-		World w = MinecraftServer.getServer().worldServers[d.Dim];
+		
+		World markerWorld = null;
+		for( World w : MinecraftServer.getServer().worldServers) {
+			if (w.provider.dimensionId == d.Dim) markerWorld = w;
+		}
+		
 		String polyid = "pp_dim" + d.Dim + "X" + d.ChunkX + "Z" + d.ChunkZ;
 		String name = "Owned Chunk";
 		double[] x = new double[4];
@@ -81,7 +84,7 @@ public class DynmapSupport extends DynmapCommonAPIListener {
 
 		AreaMarker m = resareas.remove(polyid);
 		if(m == null) {
-			m = set.createAreaMarker(polyid, name, false, getWorldName(w), x, z, false);
+			m = set.createAreaMarker(polyid, name, false, getWorldName(markerWorld), x, z, false);
 			if(m == null) {
 				FMLLog.log("PacProtect", Level.INFO,"error adding area marker " + polyid);
 				return;
