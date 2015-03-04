@@ -108,6 +108,7 @@ public class DynmapSupport extends DynmapCommonAPIListener {
 	}
 
 	public void updateMarker(ChunkProtectionDefinition d) {
+		remMarker(d);
 		addMarker(d);
 	}
 
@@ -164,6 +165,11 @@ public class DynmapSupport extends DynmapCommonAPIListener {
 		} else
 			n = "DIM" + w.provider.dimensionId;
 		return n;
+	}
+
+	public void purgeSet() {
+		set.deleteMarkerSet();
+		initPostAPI();		
 	}
 
 }

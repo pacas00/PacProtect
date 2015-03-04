@@ -364,12 +364,19 @@ public class LandProtectCMD extends CommandBase {
 	}
 
 	private void admin(ICommandSender paramICommandSender, String[] args) {
-		if (args.length < 2) throw new WrongUsageException("/protect admin {}");
+		if (args.length < 2) throw new WrongUsageException("/protect admin {save|reload}");
 		
 		if (!(paramICommandSender.canCommandSenderUseCommand(4, "llllllll"))) {
 			throw new WrongUsageException("Your not the boss of me.");
 		}
 		
+		String cmd = args[1];
+
+		if (cmd.equalsIgnoreCase("save")) ChunkProtectionManager.save() ;
+
+		else if (cmd.equalsIgnoreCase("reload")) ChunkProtectionManager.reload();
+
+		else throw new WrongUsageException("/protect admin {save|reload}");
 		
 
 	}
