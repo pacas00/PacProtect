@@ -65,7 +65,9 @@ public class ChunkProtectionManager {
 		for (int i = 0; i < protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = protectedChunks.get(i);
 			if (d.ChunkX == chunkX && d.ChunkZ == chunkZ && d.Owner.compareTo(owner) == 0) {
+				int index = protectedChunks.indexOf(i);
 				d.addFriend(id);
+				protectedChunks.set(index, d);
 				ChunkProtectionFriendAddedEvent event = new ChunkProtectionFriendAddedEvent(d);
 				MinecraftForge.EVENT_BUS.post(event);
 				if (mod_PacProtect.dynmap != null) mod_PacProtect.dynmap.updateMarker(d);
@@ -80,7 +82,9 @@ public class ChunkProtectionManager {
 		for (int i = 0; i < protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = protectedChunks.get(i);
 			if (d.ChunkX == chunkX && d.ChunkZ == chunkZ && d.Owner.compareTo(owner) == 0) {
+				int index = protectedChunks.indexOf(i);
 				d.delFriend(id);
+				protectedChunks.set(index, d);
 				ChunkProtectionFriendRemovedEvent event = new ChunkProtectionFriendRemovedEvent(d);
 				MinecraftForge.EVENT_BUS.post(event);
 				if (mod_PacProtect.dynmap != null) mod_PacProtect.dynmap.updateMarker(d);
