@@ -38,7 +38,7 @@ public class LandProtectCMD extends CommandBase {
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_)
     {
-        return p_71519_1_.canCommandSenderUseCommand(this.getRequiredPermissionLevel(), this.getCommandName());
+        return true; //Fuck it //p_71519_1_.canCommandSenderUseCommand(this.getRequiredPermissionLevel(), this.getCommandName());
     }
 
     /**
@@ -366,7 +366,7 @@ public class LandProtectCMD extends CommandBase {
 	private void admin(ICommandSender paramICommandSender, String[] args) {
 		if (args.length < 2) throw new WrongUsageException("/protect admin {save|reload}");
 		
-		if (!(paramICommandSender.canCommandSenderUseCommand(4, "llllllll"))) {
+		if (!(paramICommandSender.canCommandSenderUseCommand(4, "stop"))) {
 			throw new WrongUsageException("Your not the boss of me.");
 		}
 		
