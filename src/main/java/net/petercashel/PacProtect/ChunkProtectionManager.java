@@ -66,7 +66,7 @@ public class ChunkProtectionManager {
 		for (int i = 0; i < protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = protectedChunks.get(i);
 			if (d.ChunkX == chunkX && d.ChunkZ == chunkZ && d.Owner.compareTo(owner) == 0) {
-				int index = protectedChunks.indexOf(d);
+				int index = i;
 				d.addFriend(id);
 				protectedChunks.set(index, d);
 				ChunkProtectionFriendAddedEvent event = new ChunkProtectionFriendAddedEvent(d);
@@ -83,7 +83,7 @@ public class ChunkProtectionManager {
 		for (int i = 0; i < protectedChunks.size(); i++) {
 			ChunkProtectionDefinition d = protectedChunks.get(i);
 			if (d.ChunkX == chunkX && d.ChunkZ == chunkZ && d.Owner.compareTo(owner) == 0) {
-				int index = protectedChunks.indexOf(d);
+				int index = i;
 				d.delFriend(id);
 				protectedChunks.set(index, d);
 				ChunkProtectionFriendRemovedEvent event = new ChunkProtectionFriendRemovedEvent(d);
